@@ -36818,7 +36818,6 @@ var Setup = class {
     const dir = (0, import_fs.readdirSync)(import_path.default.resolve(process.env.GITHUB_WORKSPACE), { withFileTypes: true }).map((entry) => {
       return `${entry.isDirectory() ? "> " : "  - "}${entry.name}`;
     }).join("\n");
-    console.log({ dir });
     import_core.default.debug(` Working Directory: ${process.env.GITHUB_WORKSPACE}:
 ${dir}`);
   }
@@ -36856,7 +36855,7 @@ var Package = class {
 var import_core2 = __toESM(require_core(), 1);
 var import_octokit = __toESM(require_dist_node25(), 1);
 var github = new import_octokit.Octokit({ auth: process.env.GITHUB_TOKEN || process.env.INPUT_GITHUB_TOKEN }).rest;
-var [owner, repo] = process.env.GITHUB_ACTION_REPOSITORY.split("/");
+var [owner, repo] = process.env.GITHUB_REPOSITORY.split("/");
 var Tag = class {
   constructor(prefix, version, postfix) {
     this.prefix = prefix;
@@ -37035,11 +37034,12 @@ async function run() {
     Setup.debug();
     Setup.requireAnyEnv("GITHUB_TOKEN", "INPUT_GITHUB_TOKEN");
     core3.setOutput("tagcreated", "no");
-    const versionSupplied = core3.getInput("root", { required: false }) !== null && core3.getInput("root", { required: false }) !== void 0 && core3.getInput("root", { required: false }).trim().length > 0;
+    const versionInput = core3.getInput("version", { required: false }).trim();
+    const versionSupplied = versionInput.length > 0;
     const strategy = versionSupplied ? "manual" : (core3.getInput("regex_pattern", { required: false }) || "").trim().length > 0 ? "regex" : (core3.getInput("strategy", { required: false }) || "package").trim().toLowerCase();
     const root = core3.getInput("root", { required: false }) || core3.getInput("package_root", { required: false }) || (strategy === "composer" ? "./composer.json" : "./");
     const isDryRun = (core3.getInput("dry_run", { required: false }) || "").trim().toLowerCase() === "true";
-    let version = core3.getInput("root", { required: false });
+    let version = versionInput || null;
     version = version === null || version.trim().length === 0 ? null : version;
     const pattern = core3.getInput("regex_pattern", { required: false });
     switch (strategy) {
