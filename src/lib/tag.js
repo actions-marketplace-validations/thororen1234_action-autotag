@@ -5,7 +5,7 @@ import { Octokit } from 'octokit'
 const github = (new Octokit({ auth: process.env.GITHUB_TOKEN || process.env.INPUT_GITHUB_TOKEN })).rest
 
 // Get owner and repo from context of payload that triggered the action
-const [owner, repo] = process.env.GITHUB_ACTION_REPOSITORY.split('/')
+const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
 export default class Tag {
   constructor(prefix, version, postfix) {

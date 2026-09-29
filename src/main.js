@@ -16,17 +16,24 @@ async function run() {
 
     // Identify the tag parsing strategy
     // Use manual strategy if a version is supplied in the action config
-    const versionSupplied = core.getInput('root', { required: false }) !== null && core.getInput('root', { required: false }) !== undefined && core.getInput('root', { required: false }).trim().length > 0
-    const strategy = versionSupplied ? 'manual' : (core.getInput('regex_pattern', { required: false }) || '').trim().length > 0 ? 'regex' : ((core.getInput('strategy', { required: false }) || 'package').trim().toLowerCase())
+    const versionInput = core.getInput('version', { required: false }).trim()
+    const versionSupplied = versionInput.length > 0
+    const strategy = versionSupplied
+      ? 'manual'
+      : (core.getInput('regex_pattern', { required: false }) || '').trim().length > 0
+        ? 'regex'
+        : (core.getInput('strategy', { required: false }) || 'package').trim().toLowerCase()
 
     // Identify the root directory to use for auto-identifying a tag version
-    const root = core.getInput('root', { required: false }) || core.getInput('package_root', { required: false }) || (strategy === 'composer' ? './composer.json' : './')
-
+    const root =
+      core.getInput('root', { required: false }) ||
+      core.getInput('package_root', { required: false }) ||
+      (strategy === 'composer' ? './composer.json' : './')
     // If this value is true, the tag will not be pushed
     const isDryRun = (core.getInput('dry_run', { required: false }) || '').trim().toLowerCase() === 'true'
 
     // Extract the version number using the supplied strategy
-    let version = core.getInput('root', { required: false })
+    let version = versionInput || null
     version = version === null || version.trim().length === 0 ? null : version
 
     // If Regex strategy is specified, retrieve the Regex pattern

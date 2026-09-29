@@ -3,7 +3,7 @@ import { readdirSync } from 'fs'
 import path from 'path'
 
 export default class Setup {
-  static debug () {
+  static debug() {
     // Metadate for debugging
     // core.debug(
     //   ` Available environment variables:\n -> ${Object.keys(process.env)
@@ -17,12 +17,10 @@ export default class Setup {
       })
       .join('\n')
 
-      console.log({dir})
-
     core.debug(` Working Directory: ${process.env.GITHUB_WORKSPACE}:\n${dir}`)
   }
 
-  static requireAnyEnv () {
+  static requireAnyEnv() {
     for (const arg of arguments) {
       if (!process.env.hasOwnProperty(arg)) {
         return
